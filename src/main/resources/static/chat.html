@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>调用演示</title>
+    <style>
+        body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        #output {
+            height: 400px;
+            width: 900px;
+            border: 2px solid #c7c1c1;
+            padding: 10px;
+            overflow-y: auto;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            box-shadow: 0 4px 6px rgba(13, 118, 231, 0.25);
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .danger-button {
+            background-color: #ec1b1b;
+        }
+
+        .form-group {
+            margin: 20px 0;
+            max-width: 900px;
+        }
+
+        label[for="promptInput"] {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            color: #2c3e50;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        label[for="paramInput"] {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            color: #2c3e50;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        #promptInput, #paramInput {
+            /* 尺寸调整 */
+            width: 100%;
+            padding: 14px 20px;
+
+            /* 样式美化 */
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            color: #44878c;
+            font-style: italic;
+        }
+
+        #promptInput, #paramInput:focus {
+            outline: none;
+            border-color: #0056b3;
+            box-shadow: 0 4px 6px rgba(0,123,255,0.25);
+            background-color: white;
+        }
+
+        /* 暗色模式适配 */
+        @media (prefers-color-scheme: dark) {
+            #promptInput, #paramInput {
+                background-color: #2d3436;
+                border-color: #4a90e2;
+                color: #ecf0f1;
+            }
+
+            #promptInput, #paramInput:focus {
+                background-color: #34495e;
+            }
+        }
+
+        /* 输入提示动画 */
+        @keyframes pulse-shadow {
+            0% { box-shadow: 0 0 0 0 rgba(0,123,255,0.4) }
+            100% { box-shadow: 0 0 0 10px rgba(0,123,255,0) }
+        }
+
+        .input-highlight {
+            animation: pulse-shadow 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-group">
+    <label for="promptInput">URL + Prompt 提示词：</label>
+    <input type="text"
+           id="promptInput"
+           value="http://localhost:8080/deepseek/chat?prompt="
+           class="styled-input">
+</div>
+
+<div class="form-group">
+    <label for="paramInput">参数串：</label>
+    <input type="text"
+           id="paramInput"
+           value="model=deepseek-ai/DeepSeek-R1&temperature=0.7&frequencyPenalty=0.5&user=user&topP=0.7&maxCompletionTokens=1024"
+           class="styled-input">
+</div>
+
+<button onclick="start()">开始请求</button>
+<button onclick="disconnectAiServer()" class="danger-button">断开连接</button>
+<button onclick="tips()">参数提示</button>
+<div id="output"></div>
+
+
+<script>
+    let eventSource;
+    function connectAiServer(url) {
+        eventSource = new EventSource(url);
+    }
+
+    function disconnectAiServer() {
+        if (eventSource) {
+            eventSource.close()
+        }
+    }
+
+
+    function start() {
+        const output = document.getElementById('output')
+        const promptInput = document.getElementById('promptInput')
+        const paramInput = document.getElementById('paramInput')
+        output.textContent = '' // 清空内容
+
+        try {
+            // 创建 EventSource 连接
+            connectAiServer(promptInput.value + "&" + paramInput.value)
+
+            // 监听默认事件（无事件名的消息）
+            eventSource.onmessage = (event) => {
+                const value = event.data;
+                const data = JSON.parse(value);
+
+                if (data.choices[0].delta.reasoning_content === '') {
+                    output.textContent += '开始思考：\n\t'
+                }
+                if (data.choices[0].delta.content === '\n\n') {
+                    output.textContent += '思考结束！!\n\n\n\n'
+                    output.textContent += '以下是正式回答：\n\n'
+                }
+                if(data.choices[0].finish_reason === "stop" || data.choices[0].delta.content === "[DONE]") {
+                    output.textContent += '\r\n\r\n回答结束！！'
+                    disconnectAiServer()
+                }
+
+                // 拼接思考内容
+                if (data.choices[0].delta.reasoning_content) {
+                    output.textContent += data.choices[0].delta.reasoning_content
+                }
+
+                // 拼接回答内容
+                if (data.choices[0].delta.content) {
+                    output.textContent += data.choices[0].delta.content;
+                }
+
+                // 自动滚动到底部
+                output.scrollTop = output.scrollHeight
+            };
+
+        } catch (error) {
+            console.error('请求失败:', error)
+            output.textContent = '请求失败: ' + error.message
+            disconnectAiServer()
+        }
+    }
+
+    /* 回车触发请求 */
+    document.querySelector('#promptInput').addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') {
+            start()
+        }
+    })
+
+    function tips() {
+        const output = document.getElementById('output')
+        output.textContent = `
+      参数说明：
+      prompt：添加用户输入的提示词（prompt），即模型生成文本的起点。告诉模型基于什么内容生成文本。默认为：空\n
+      model：不同模型可能有不同的能力和训练数据，选择合适的模型会影响生成结果。默认为：deepseek-ai/DeepSeek-R1\n
+      temperature：控制生成文本的随机性。0.0：生成结果非常确定，倾向于选择概率最高的词。1.0：生成结果更具随机性和创造性。默认为：0.7\n
+      frequencyPenalty：控制生成文本中重复内容的惩罚程度。0.0：不惩罚重复内容。1.0 或更高：减少重复内容，增加多样性。默认为：0.5\n
+      user：标识请求的用户。用于跟踪和日志记录，通常用于区分不同用户的请求。默认为：user\n
+      topP：控制生成文本时选择词的范围。0.7：从概率最高的 70% 的词中选择。1.0：不限制选择范围。默认为：0.7\n
+      maxCompletionTokens：控制模型生成的文本的最大长度。这对于防止生成过长的文本或确保响应在预期的范围内非常有用。默认为：1024\n`
+    }
+
+
+</script>
+</body>
+</html>
