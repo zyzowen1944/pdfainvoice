@@ -29,7 +29,7 @@ public class PdfUtils {
 
     private static final Pattern INVOICE_TYPE_PATTERN = Pattern.compile(
             "(电子发票（增值税专用发票）)|(电子发票（普通发票）)|(增值税专用发票)|(普通发票)|" +
-                    "(不动产租凭)|(航空客运)|电子发票（航空运输电子客票行程单）|(货物运输)|(建筑业发票)|(建筑服务)|(旅客运输)|(农产品)|(铁路客票)|(不动产经营租赁服务)"
+                    "(不动产租凭)|(航空客运)|电子发票（航空运输电子客票行程单）|(货物运输)|(建筑业发票)|(建筑服务)|(旅客运输)|(旅客运输服务)|(农产品)|(自产农产品销售)|(铁路客票)|(电子发票（统铁一路监电制国 子客票）)|(不动产经营租赁服务)"
     );
 
     /**
@@ -73,11 +73,11 @@ public class PdfUtils {
                 return InvoiceType.FREIGHT_TRANSPORT;
             } else if (match.contains("建筑业发票")||match.contains("建筑服务")) {
                 return InvoiceType.CONSTRUCTION;
-            } else if (match.contains("旅客运输")) {
+            } else if (match.contains("旅客运输")||match.contains("旅客运输服务")) {
                 return InvoiceType.PASSENGER_TRANSPORT;
-            } else if (match.contains("农产品")) {
+            } else if (match.contains("农产品")||match.contains("资产农产品销售")) {
                 return InvoiceType.AGRICULTURAL_PRODUCT;
-            } else if (match.contains("铁路客票")) {
+            } else if (match.contains("铁路客票")||match.contains("电子发票（统铁一路监电制国 子客票）")) {
                 return InvoiceType.RAILWAY_TICKET;
             }
         }

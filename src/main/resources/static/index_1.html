@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发票解析测试</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 20px;
+        }
+        .upload-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px dashed #dee2e6;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .upload-section.dragover {
+            background-color: #e9ecef;
+        }
+        .result-section {
+            margin-top: 30px;
+        }
+        .result-area {
+            min-height: 300px;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+        .invoice-details {
+            margin-top: 20px;
+        }
+        .progress {
+            height: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+        .loading-spinner {
+            display: none;
+            margin: 0 auto;
+            width: 50px;
+            height: 50px;
+        }
+        .error-message {
+            color: #dc3545;
+            margin-top: 10px;
+            display: none;
+        }
+        .file-info {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1 class="text-center">发票解析测试系统</h1>
+        <p class="text-center text-muted">支持多种发票类型的自动解析，包括增值税专用发票、普通发票、电子发票等</p>
+    </div>
+
+    <div class="upload-section" id="dropArea">
+        <h4>上传发票PDF文件</h4>
+        <p>点击选择文件或拖拽文件到这里</p>
+        <form id="uploadForm">
+            <div class="mb-3">
+                <input class="form-control" type="file" id="fileInput" accept=".pdf">
+                <div class="file-info" id="fileInfo"></div>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary" id="parseBtn">解析发票</button>
+            <button type="button" class="btn btn-secondary" id="clearBtn">清除</button>
+        </form>
+        <div class="loading-spinner spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="error-message" id="errorMessage"></div>
+    </div>
+
+    <div class="result-section">
+        <h4>解析结果</h4>
+        <ul class="nav nav-tabs" id="resultTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="json-tab" data-bs-toggle="tab" data-bs-target="#json" type="button" role="tab">JSON 数据</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="formatted-tab" data-bs-toggle="tab" data-bs-target="#formatted" type="button" role="tab">格式化视图</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="resultTabContent">
+            <div class="tab-pane fade show active" id="json" role="tabpanel">
+                <pre class="result-area" id="resultJson"></pre>
+            </div>
+            <div class="tab-pane fade" id="formatted" role="tabpanel">
+                <div class="invoice-details" id="invoiceDetails">
+                    <div class="alert alert-info">
+                        请上传发票PDF文件并点击"解析发票"按钮查看结果
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropArea = document.getElementById('dropArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const parseBtn = document.getElementById('parseBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const resultJson = document.getElementById('resultJson');
+        const invoiceDetails = document.getElementById('invoiceDetails');
+        const progressBar = document.querySelector('.progress-bar');
+        const progress = document.querySelector('.progress');
+        const loadingSpinner = document.querySelector('.loading-spinner');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // 拖拽文件处理
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.classList.add('dragover');
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('dragover');
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.classList.remove('dragover');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateFileInfo();
+            }
+        });
+
+        fileInput.addEventListener('change', updateFileInfo);
+
+        function updateFileInfo() {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const fileSizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+                fileInfo.textContent = `文件名: ${file.name} | 大小: ${fileSizeInMB} MB`;
+                fileInfo.style.display = 'block';
+            } else {
+                fileInfo.style.display = 'none';
+            }
+        }
+
+        // 解析发票
+        parseBtn.addEventListener('click', () => {
+            if (fileInput.files.length === 0) {
+                showError('请选择发票PDF文件');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            if (!file.name.toLowerCase().endsWith('.pdf')) {
+                showError('请选择PDF格式的文件');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // 显示进度条和加载动画
+            progress.style.display = 'block';
+            loadingSpinner.style.display = 'block';
+            errorMessage.style.display = 'none';
+            progressBar.style.width = '0%';
+            resultJson.textContent = '';
+            invoiceDetails.innerHTML = '<div class="alert alert-info">正在解析中，请稍候...</div>';
+
+            // 模拟上传进度
+            let progressValue = 0;
+            const progressInterval = setInterval(() => {
+                progressValue += 5;
+                if (progressValue > 90) {
+                    clearInterval(progressInterval);
+                }
+                progressBar.style.width = `${progressValue}%`;
+            }, 100);
+
+            // 发送请求
+            fetch('/api/v1/invoice/parse', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    clearInterval(progressInterval);
+                    progressBar.style.width = '100%';
+
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message || '发票解析失败');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 显示JSON结果
+                    resultJson.textContent = JSON.stringify(data, null, 2);
+
+                    // 显示格式化视图
+                    if (data.code === 0 && data.data) {
+                        displayFormattedInvoice(data.data);
+                    } else {
+                        invoiceDetails.innerHTML = `<div class="alert alert-warning">
+                            ${data.message || '未能获取发票详情'}
+                        </div>`;
+                    }
+                })
+                .catch(error => {
+                    showError(error.message || '请求失败，请稍后再试');
+                })
+                .finally(() => {
+                    setTimeout(() => {
+                        progress.style.display = 'none';
+                        loadingSpinner.style.display = 'none';
+                    }, 500);
+                });
+        });
+
+        // 清除按钮
+        clearBtn.addEventListener('click', () => {
+            fileInput.value = '';
+            fileInfo.style.display = 'none';
+            resultJson.textContent = '';
+            progress.style.display = 'none';
+            errorMessage.style.display = 'none';
+            invoiceDetails.innerHTML = '<div class="alert alert-info">请上传发票PDF文件并点击"解析发票"按钮查看结果</div>';
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        function displayFormattedInvoice(invoice) {
+            const dateString = invoice.issueDate ? new Date(invoice.issueDate).toLocaleDateString('zh-CN') : '未知';
+
+            let itemsHtml = '';
+            if (invoice.items && invoice.items.length > 0) {
+                itemsHtml = `
+                        <div class="table-responsive mt-3">
+                            <table class="table table-striped table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>项目名称</th>
+                                        <th>规格型号</th>
+                                        <th>单位</th>
+                                        <th>数量</th>
+                                        <th>单价</th>
+                                        <th>金额</th>
+                                        <th>税率</th>
+                                        <th>税额</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${invoice.items.map(item => `
+                                        <tr>
+                                            <td>${item.name || ''}</td>
+                                            <td>${item.specification || ''}</td>
+                                            <td>${item.unit || ''}</td>
+                                            <td>${item.quantity || ''}</td>
+                                            <td>${item.unitPrice || ''}</td>
+                                            <td>${item.amount || ''}</td>
+                                            <td>${item.taxRate || ''}</td>
+                                            <td>${item.tax || ''}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+            }
+
+            invoiceDetails.innerHTML = `
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">发票信息 - ${invoice.invoiceType ? invoice.invoiceType.description : '未知类型'}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>发票号码:</strong> ${invoice.invoiceNumber || '未知'}</p>
+                                    <p><strong>开票日期:</strong> ${dateString}</p>
+                                    <p><strong>价税合计:</strong> ￥${invoice.totalWithTax || '0.00'}</p>
+                                    <p><strong>大写金额:</strong> ${invoice.amountInWords || ''}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>合计金额:</strong> ￥${invoice.totalAmount || '0.00'}</p>
+                                    <p><strong>合计税额:</strong> ￥${invoice.totalTax || '0.00'}</p>
+                                    <p><strong>备注:</strong> ${invoice.remark || ''}</p>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header bg-light">
+                                            <h6 class="mb-0">购买方信息</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p><strong>名称:</strong> ${invoice.buyerName || ''}</p>
+                                            <p><strong>纳税人识别号:</strong> ${invoice.buyerTaxId || ''}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header bg-light">
+                                            <h6 class="mb-0">销售方信息</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p><strong>名称:</strong> ${invoice.sellerName || ''}</p>
+                                            <p><strong>纳税人识别号:</strong> ${invoice.sellerTaxId || ''}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 class="mt-4">发票明细</h5>
+                            ${itemsHtml || '<p>无明细信息</p>'}
+                        </div>
+                    </div>
+                `;
+        }
+    });
+</script>
+</body>
+</html>

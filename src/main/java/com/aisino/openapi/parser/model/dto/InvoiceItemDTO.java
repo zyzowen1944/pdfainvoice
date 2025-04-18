@@ -68,4 +68,5 @@ public class InvoiceItemDTO {
     private String departureStation; // 出发站
     private String arrivalStation;   // 到达站
     private String ticketNumber;     // 票号
+    private String idNo;             // 乘客身份证号码
 }

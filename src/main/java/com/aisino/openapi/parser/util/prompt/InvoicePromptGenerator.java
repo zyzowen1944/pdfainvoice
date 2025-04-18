@@ -229,7 +229,7 @@ public class InvoicePromptGenerator {
                 "- taxAmount(税额): 税额，浮点小数" +
                 "- totalWithTax(价税合计): 价税合计，浮点小数" +
                 "- amountInWords(价税合计大写): 价税合计的大写金额" +
-                "- items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax):" +
+                "- items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax、trainNumber、departureStation,ticketNumber,passengerName,idNo):" +
                 "  - name: 项目名称" +
                 "  - specification: 规格型号" +
                 "  - unit: 单位" +
@@ -241,9 +241,11 @@ public class InvoicePromptGenerator {
                 "  - trainNumber: 车次" +
                 "  - departureStation: 出发站" +
                 "  - arrivalStation: 到达站" +
-                "  - ticketNumber: 票号" +
+                "  - ticketNumber: 电子客票号" +
+                "  - passengerName: 乘客姓名" +
+                "  - idNo: 身份证号码" +
                 "- issue(开票人): 开票人姓名" +
-                "- remark(备注): 备注信息 [<sup data-citation='{&quot;url&quot;:&quot;https://www.cnblogs.com/mxh-java/p/12469117.html&quot;,&quot;title&quot;:&quot;Java日期工具类(最全) - 尘世间迷茫的小书童 - 博客园&quot;,&quot;content&quot;:&quot;Java7和Java8日期计算工具类 import java.text.ParseException; import java.text.SimpleDateFormat; import java.time.LocalDate; import java.time.LocalDateTime; imp Java日期工具类(最全) - 尘世间迷茫的小书童 - 博客园&quot;}'>2</sup>](https://www.cnblogs.com/mxh-java/p/12469117.html)";
+                "- remark(备注): 备注信息";
     }
 
     /**
