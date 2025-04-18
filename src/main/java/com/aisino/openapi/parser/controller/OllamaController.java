@@ -16,6 +16,6 @@ public class OllamaController {
 
     @GetMapping("/chat/{msg}")
     public String search(@PathVariable("msg")  String prompt) {
-        return ollamaService.search(prompt);
+        return ollamaService.search(null,prompt);
     }
 }

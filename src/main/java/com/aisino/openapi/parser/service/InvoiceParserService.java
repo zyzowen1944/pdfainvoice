@@ -2,6 +2,7 @@ package com.aisino.openapi.parser.service;
 
 
 import com.aisino.openapi.parser.model.dto.InvoiceDTO;
+import com.aisino.openapi.parser.model.enums.InvoiceType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.concurrent.CompletableFuture;

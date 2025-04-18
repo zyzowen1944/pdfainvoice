@@ -7,36 +7,45 @@ import com.alibaba.fastjson2.JSONObject;
 public class Test {
 
     public static void main(String[] args) {
-        String s= "```json\n" +
-                "{\n" +
-                "  \"invoiceType\": \"普通发票\",\n" +
-                "  \"invoiceNumber\": \"25337000000124583791\",\n" +
-                "  \"invoiceDate\": \"2025年04月03日\",\n" +
-                "  \"buyerName\": \"永嘉县人民医院（永嘉县东城街道社区卫生服务中心）\",\n" +
-                "  \"buyerTaxId\": \"12330324470726738X\",\n" +
-                "  \"sellerName\": \"上药控股温州有限公司\",\n" +
-                "  \"sellerTaxId\": \"9133030477313537XX\",\n" +
-                "  \"totalAmount\": 1680.00,\n" +
-                "  \"taxAmount\": 193.27,\n" +
-                "  \"totalWithTax\": 1873.27,\n" +
-                "  \"amountInWords\": \"壹仟陆佰捌拾圆整\",\n" +
+        String s= "{\n" +
+                "  \"invoiceType\": \"电子普通发票\",\n" +
+                "  \"invoiceNumber\": \"24112000000219407560\",\n" +
+                "  \"issueDate\": \"2024年12月23日\",\n" +
+                "  \"buyerName\": \"北京轻舟装饰材料有限公司\",\n" +
+                "  \"buyerTaxId\": \"91110115MADLN4H98C\",\n" +
+                "  \"sellerName\": \"北京英格卡购物中心有限公司\",\n" +
+                "  \"sellerTaxId\": \"91110000692300855B\",\n" +
+                "  \"totalAmount\": 571.43,\n" +
+                "  \"taxAmount\": 28.57,\n" +
+                "  \"totalWithTax\": 600.00,\n" +
+                "  \"amountInWords\": \"陆佰圆整\",\n" +
                 "  \"items\": [\n" +
                 "    {\n" +
-                "      \"name\": \"中成药*小儿肺热咳喘颗粒4g(相当于饮片10.6g)*12袋盒\",\n" +
-                "      \"specification\": \"4g(相当于饮片10.6g)\",\n" +
-                "      \"unit\": \"盒\",\n" +
-                "      \"quantity\": 50,\n" +
-                "      \"unitPrice\": 29.73451327,\n" +
-                "      \"amount\": 1486.73,\n" +
-                "      \"taxRate\": 13.00,\n" +
-                "      \"tax\": 193.27\n" +
+                "      \"name\": \"*经营租赁*停车费\",\n" +
+                "      \"specification\": \"京（2023）大不动产权第 m²\",\n" +
+                "      \"unit\": \"\",\n" +
+                "      \"quantity\": 2,\n" +
+                "      \"unitPrice\": 285.714285714286,\n" +
+                "      \"amount\": 571.43,\n" +
+                "      \"taxRate\": 5 / 100,\n" +
+                "      \"tax\": 28.57\n" +
                 "    }\n" +
                 "  ],\n" +
-                "  \"issue\": \"开票人：林陈菊\",\n" +
-                "  \"remark\": \"销方开户银行:中信银行温州分行营业部;    银行账号:8110801012702471874;   销售订单NO:501202504030549 O13300002025040211890, (城南社区)永嘉县东城街道浦口村\"\n" +
-                "}\n" +
-                "```";
+                "  \"issue\": \"王彩霞\",\n" +
+                "  \"remark\": \"\"\n" +
+                "}";
 
+        String msg = "作为发票专家，我提供了一份电子普通发票的文本内容，请帮我将其解析为结构化的JSON格式，"
+                + "包含以下字段：invoiceType(发票类型)、invoiceNumber(发票号码)、issueDate(开票日期)、"
+                + "buyerName(购买方名称)、buyerTaxId(购买方税号)、sellerName(销售方名称)、"
+                + "sellerTaxId(销售方税号)、totalAmount(金额)、taxAmount(税额)、"
+                + "totalWithTax(价税合计)、amountInWords(价税合计大写)、"
+                + "items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax)、"
+                + "以及issue(开票人)和remark(备注)。\n\n"
+                + "请注意：保证tax税额字段、unitPrice、amount都是浮点小数，invoiceNumber发票号码是内容中一个20位的纯数字，购买和销售方税号是内容中的18位的数字和字母，如果免税商品，税额为0" +
+                "以下是发票文本内容：\n\n" ;
+
+        System.out.println(msg);
         InvoiceDTO invoice = new InvoiceDTO();
 
 
@@ -45,7 +54,7 @@ public class Test {
 
         // 提取明细项目
         //extractItems(invoice, text);
-        s = s.substring(s.indexOf("{"),s.lastIndexOf("}")+1);
+       // s = s.substring(s.indexOf("{"),s.lastIndexOf("}")+1);
         System.out.println(s);
         invoice = JSONObject.parseObject(s,InvoiceDTO.class);
         invoice.setInvoiceType(InvoiceType.ELECTRONIC_NORMAL);

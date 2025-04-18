@@ -29,7 +29,7 @@ public class PdfUtils {
 
     private static final Pattern INVOICE_TYPE_PATTERN = Pattern.compile(
             "(电子发票（增值税专用发票）)|(电子发票（普通发票）)|(增值税专用发票)|(普通发票)|" +
-                    "(不动产租凭)|(航空客运)|(货物运输)|(建筑业发票)|(旅客运输)|(农产品)|(铁路客票)"
+                    "(不动产租凭)|(航空客运)|电子发票（航空运输电子客票行程单）|(货物运输)|(建筑业发票)|(建筑服务)|(旅客运输)|(农产品)|(铁路客票)|(不动产经营租赁服务)"
     );
 
     /**
@@ -65,13 +65,13 @@ public class PdfUtils {
                 return InvoiceType.SPECIAL_VAT;
             } else if (match.contains("普通发票")) {
                 return InvoiceType.NORMAL;
-            } else if (match.contains("不动产租凭")) {
+            } else if (match.contains("不动产租凭")||match.contains("不动产经营租赁服务")) {
                 return InvoiceType.REAL_ESTATE_RENTAL;
-            } else if (match.contains("航空客运")) {
+            } else if (match.contains("航空客运")||match.contains("电子发票（航空运输电子客票行程单）")) {
                 return InvoiceType.AIR_PASSENGER;
             } else if (match.contains("货物运输")) {
                 return InvoiceType.FREIGHT_TRANSPORT;
-            } else if (match.contains("建筑业发票")) {
+            } else if (match.contains("建筑业发票")||match.contains("建筑服务")) {
                 return InvoiceType.CONSTRUCTION;
             } else if (match.contains("旅客运输")) {
                 return InvoiceType.PASSENGER_TRANSPORT;

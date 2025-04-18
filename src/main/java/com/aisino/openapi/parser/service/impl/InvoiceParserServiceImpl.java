@@ -54,6 +54,7 @@ public class InvoiceParserServiceImpl implements InvoiceParserService {
                 IOUtils.copy(file.getInputStream(), out);
             }
             PDDocument document  = Loader.loadPDF(tempFile);
+            InvoiceType invoiceType = null;
             try {
 
                 // 检查PDF是否有效
@@ -67,7 +68,7 @@ public class InvoiceParserServiceImpl implements InvoiceParserService {
 //                log.debug("提取的PDF文本: {}", text);
 
 //                // 识别发票类型
-                InvoiceType invoiceType = PdfUtils.identifyInvoiceType(text);
+                invoiceType = PdfUtils.identifyInvoiceType(text);
 //                log.info("识别到的发票类型: {}", invoiceType.getDescription());
 
                 // 根据发票类型选择相应的提取器解析发票
@@ -79,7 +80,7 @@ public class InvoiceParserServiceImpl implements InvoiceParserService {
                 } catch (Exception e) {
                     log.error("本地解析异常: {}", e.getMessage());
                     log.info("启用大模型解析 ");
-                    invoice = new ElectronicNormalInvoiceParser(ollamaService).parseInvoice(tempFile);
+                    invoice = new ElectronicNormalInvoiceParser(ollamaService).parseInvoice(invoiceType,tempFile);
 
                 }
 

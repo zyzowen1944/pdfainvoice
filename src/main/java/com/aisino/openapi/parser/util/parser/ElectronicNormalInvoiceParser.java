@@ -83,7 +83,7 @@ public class ElectronicNormalInvoiceParser {
      * @param pdfFile PDF文件
      * @return 解析后的发票对象
      */
-    public InvoiceDTO parseInvoice(File pdfFile) throws IOException {
+    public InvoiceDTO parseInvoice(InvoiceType invoiceType,File pdfFile) throws IOException {
         log.info("开始解析电子普通发票: {}", pdfFile.getName());
 
         try (PDDocument document = Loader.loadPDF(pdfFile)) {
@@ -101,19 +101,19 @@ public class ElectronicNormalInvoiceParser {
 //        extractItems(invoice, text);
 //        log.debug("本地程序解析 耗时{} {} ",System.currentTimeMillis()-start,invoice);
 
-        /*if(enableOllama) {
+        if(enableOllama) {
             // Ollama GLM-7
             start = System.currentTimeMillis();
-            text = ollamaService.search(text);
-            log.debug("本地AI- THUDM/GLM-4-9B-0414  解析   耗时{} {} ", System.currentTimeMillis() - start, text);
-        }*/
-
-        if(enableSilcom) {
-            // Silcom Qwen2.5-7B-Instruct
-            start = System.currentTimeMillis();
-            text = DeepseekUtil.getInstance().processWithDeepSeek(text);
-            log.debug("Silcom THUDM/GLM-4-9B-0414 解析  耗时{} {}", System.currentTimeMillis() - start, text);
+            text = ollamaService.search(invoiceType,text);
+            log.debug("本地AI- qwen2.5-coder:0.5b  解析   耗时{} {} ", System.currentTimeMillis() - start, text);
         }
+
+//        if(enableSilcom) {
+//            // Silcom Qwen2.5-7B-Instruct
+//            start = System.currentTimeMillis();
+//            text = DeepseekUtil.getInstance().processWithDeepSeek(text);
+//            log.debug("Silcom THUDM/GLM-4-9B-0414 解析  耗时{} {}", System.currentTimeMillis() - start, text);
+//        }
         text = text.substring(text.indexOf("{"),text.lastIndexOf("}")+1);
         invoice = JSONObject.parseObject(text,InvoiceDTO.class);
         invoice.setInvoiceType(InvoiceType.ELECTRONIC_NORMAL);
