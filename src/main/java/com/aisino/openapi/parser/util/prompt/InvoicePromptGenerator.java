@@ -127,7 +127,7 @@ public class InvoicePromptGenerator {
                 "- taxAmount(税额): 税额，浮点小数" +
                 "- totalWithTax(价税合计): 价税合计，浮点小数" +
                 "- amountInWords(价税合计大写): 价税合计的大写金额" +
-                "- items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax):" +
+                "- items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax、projectName、projectLocation、constructionDate、contractAmount、contractNumber、constructionCompany):" +
                 "  - name: 项目名称" +
                 "  - specification: 规格型号" +
                 "  - unit: 单位" +

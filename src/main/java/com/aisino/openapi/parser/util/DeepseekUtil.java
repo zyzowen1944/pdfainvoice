@@ -23,6 +23,7 @@ public class DeepseekUtil {
     private final String deepSeekApiUrl = "https://api.siliconflow.cn/v1/chat/completions"; // 替换为实际的DeepSeek API URL
     private final String deepSeekApiKey = "sk-aaazkvlcdzzqpftlbmlagtgnuhdpmaybkvqxrrsjgdfqlcsg"; // 替换为您的DeepSeek API密钥
     private final String llmodel = "THUDM/GLM-4-9B-0414";
+    //   THUDM/GLM-4-9B-0414
 
     private static DeepseekUtil deepseekUtil;
 
@@ -51,6 +52,7 @@ public class DeepseekUtil {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.add("Content-Encoding", "gzip");
             headers.setBearerAuth(deepSeekApiKey);
             String msg = "";
 
@@ -103,6 +105,7 @@ public class DeepseekUtil {
             requestBody.put("messages", new Object[]{message});
             requestBody.put("temperature", 0.1); // 低温度，增加输出确定性
             requestBody.put("max_tokens", 2000);
+
 
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
