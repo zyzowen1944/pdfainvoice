@@ -22,8 +22,8 @@ public class DeepseekUtil {
     private final RestTemplate restTemplate = new RestTemplate();
     private final String deepSeekApiUrl = "https://api.siliconflow.cn/v1/chat/completions"; // 替换为实际的DeepSeek API URL
     private final String deepSeekApiKey = "sk-aaazkvlcdzzqpftlbmlagtgnuhdpmaybkvqxrrsjgdfqlcsg"; // 替换为您的DeepSeek API密钥
-    private final String llmodel = "THUDM/GLM-4-9B-0414";
-    //   THUDM/GLM-4-9B-0414
+    private final String llmodel = "deepseek-ai/deepseek-vl2";
+    //   THUDM/GLM-4-9B-0414  THUDM/chatglm3-6b  THUDM/GLM-4-32B-0414  Pro/Qwen/Qwen2.5-VL-7B-Instruct  deepseek-ai/deepseek-vl2
 
     private static DeepseekUtil deepseekUtil;
 

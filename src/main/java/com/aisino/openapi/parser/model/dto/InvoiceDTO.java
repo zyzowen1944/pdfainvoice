@@ -49,4 +49,21 @@ public class InvoiceDTO {
     private String        sellerBank;     //销方开户银行
     private String buyerAccountNumber;    //银行账号
     private String       buyerBank;       //购方开户银行
+
+    // InvoiceDTO 补充以下字段
+
+    // 机动车零售电子发票特有字段
+    private String vehicleType;           // 车辆类型
+    private String vehicleBrand;          // 车辆品牌
+    private String vehicleModel;          // 车辆型号
+    private String vehicleManufacturer;   // 制造厂家
+    private String vehicleVIN;            // 车辆识别代号/车架号
+    private String vehicleEngineNumber;   // 发动机号
+    private String vehicleCertificateNumber; // 合格证号
+    private String vehicleImportCertificate; // 进口证明书号
+    private String vehicleTaxPaymentCertificate; // 完税证明号码
+    private String vehicleRegistrationDate;  // 机动车注册登记日期
+    private String vehicleInvoiceType;     // 机动车发票类型（如：二手车销售统一发票、机动车销售统一发票）
+    private String vehicleSalesType;       // 销售类型（如：新车销售、二手车销售）
+
 }

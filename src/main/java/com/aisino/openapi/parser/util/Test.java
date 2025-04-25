@@ -46,18 +46,28 @@ public class Test {
                 "以下是发票文本内容：\n\n" ;
 
         System.out.println(msg);
+
+        // 先解析JSON为通用JSONObject
+        JSONObject jsonObject = JSONObject.parseObject(s);
+
+        // 手动创建InvoiceDTO实例
         InvoiceDTO invoice = new InvoiceDTO();
 
+        // 其他字段会被正常解析
+        invoice = JSONObject.parseObject(s, InvoiceDTO.class);
 
-        // 提取基本信息
-        //extractBasicInfo(invoice, text);
-
-        // 提取明细项目
-        //extractItems(invoice, text);
-       // s = s.substring(s.indexOf("{"),s.lastIndexOf("}")+1);
-        System.out.println(s);
-        invoice = JSONObject.parseObject(s,InvoiceDTO.class);
-        invoice.setInvoiceType(InvoiceType.ELECTRONIC_NORMAL);
+        // 根据JSON中的字符串类型的invoiceType设置枚举类型
+        String invoiceTypeStr = jsonObject.getString("invoiceType");
+        if ("电子普通发票".equals(invoiceTypeStr)) {
+            invoice.setInvoiceType(InvoiceType.ELECTRONIC_NORMAL);
+        } else if ("增值税专用发票".equals(invoiceTypeStr)) {
+            invoice.setInvoiceType(InvoiceType.SPECIAL_VAT);
+        } else if ("电子增值税专用发票".equals(invoiceTypeStr)) {
+            invoice.setInvoiceType(InvoiceType.ELECTRONIC_SPECIAL_VAT);
+        } else {
+            // 设置默认或其他类型
+            invoice.setInvoiceType(InvoiceType.UNKNOWN);
+        }
 
         System.out.println(invoice.toString());
     }

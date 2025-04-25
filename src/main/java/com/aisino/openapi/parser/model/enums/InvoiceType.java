@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public enum InvoiceType {
     SPECIAL_VAT("增值税专用发票"),
     NORMAL("普通发票"),
@@ -21,4 +20,12 @@ public enum InvoiceType {
     UNKNOWN("未知类型");
 
     private final String description;
+    // 构造函数
+    InvoiceType(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

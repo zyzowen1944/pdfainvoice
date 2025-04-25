@@ -5,6 +5,7 @@ import com.aisino.openapi.parser.exception.ErrorCode;
 import com.aisino.openapi.parser.exception.InvoiceParserException;
 import com.aisino.openapi.parser.model.enums.InvoiceType;
 import com.aisino.openapi.parser.util.extractors.*;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,11 @@ public class InvoiceExtractorFactory {
 
     private final AppConfig appConfig;
     private final Map<InvoiceType, InvoiceExtractor> extractors = new HashMap<>();
+
+    @PostConstruct
+    public void initializeExtractors() {
+        init();
+    }
 
     /**
      * 初始化所有提取器

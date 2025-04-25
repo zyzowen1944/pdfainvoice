@@ -20,7 +20,7 @@ public class InvoicePromptGenerator {
                 "- taxAmount(税额): 税额，浮点小数" +
                 "- totalWithTax(价税合计): 价税合计，浮点小数" +
                 "- amountInWords(价税合计大写): 价税合计的大写金额" +
-                "- items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax):" +
+                "- items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax、propertyAddress、leasePeriod、tenantName、lesseeName):" +
                 "  - name: 项目名称" +
                 "  - specification: 规格型号" +
                 "  - unit: 单位" +
@@ -54,7 +54,7 @@ public class InvoicePromptGenerator {
                 "- taxAmount(税额): 税额，浮点小数" +
                 "- totalWithTax(价税合计): 价税合计，浮点小数" +
                 "- amountInWords(价税合计大写): 价税合计的大写金额" +
-                "- items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax):" +
+                "- items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax、flightNumber、departureDate、departureTime、departureAirport、arrivalAirport、passengerName、seatNumber):" +
                 "  - name: 项目名称" +
                 "  - specification: 规格型号" +
                 "  - unit: 单位" +
@@ -91,7 +91,7 @@ public class InvoicePromptGenerator {
                 "- taxAmount(税额): 税额，浮点小数" +
                 "- totalWithTax(价税合计): 价税合计，浮点小数" +
                 "- amountInWords(价税合计大写): 价税合计的大写金额" +
-                "- items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax):" +
+                "- items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax、transportMode、origin、destination、carrier、vehicleNumber、waybillNumber):" +
                 "  - name: 项目名称" +
                 "  - specification: 规格型号" +
                 "  - unit: 单位" +
@@ -163,7 +163,7 @@ public class InvoicePromptGenerator {
                 "- taxAmount(税额): 税额，浮点小数" +
                 "- totalWithTax(价税合计): 价税合计，浮点小数" +
                 "- amountInWords(价税合计大写): 价税合计的大写金额" +
-                "- items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax):" +
+                "- items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax、travelDate、seatClass):" +
                 "  - name: 项目名称" +
                 "  - specification: 规格型号" +
                 "  - unit: 单位" +
@@ -195,15 +195,15 @@ public class InvoicePromptGenerator {
                 "- taxAmount(税额): 税额，浮点小数" +
                 "- totalWithTax(价税合计): 价税合计，浮点小数" +
                 "- amountInWords(价税合计大写): 价税合计的大写金额" +
-                "- items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax):" +
+                "- items数组(包含name、specification、unit、quantity、unitPrice、amount、taxRate、tax、productCategory、harvestDate、farmerName、productionMethod):" +
                 "  - name: 项目名称" +
                 "  - specification: 规格型号" +
                 "  - unit: 单位" +
                 "  - quantity: 数量" +
                 "  - unitPrice: 单价，浮点小数" +
                 "  - amount: 金额，浮点小数" +
-                "  - taxRate: 税率/征收率" +
-                "  - tax: 税额，浮点小数" +
+                "  - taxRate: 税率/征收率/免税时为0" +
+                "  - tax: 税额，浮点小数/免税时为0" +
                 "  - productCategory: 农产品类别" +
                 "  - harvestDate: 收获日期" +
                 "  - farmerName: 农户名称" +

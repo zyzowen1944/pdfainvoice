@@ -69,4 +69,35 @@ public class InvoiceItemDTO {
     private String arrivalStation;   // 到达站
     private String ticketNumber;     // 票号
     private String idNo;             // 乘客身份证号码
+
+
+    // 机动车零售发票
+    // InvoiceItemDTO 补充以下字段
+
+    // 机动车零售电子发票项目特有字段
+    private String vehicleType;           // 车辆类型
+    private String vehicleBrand;          // 车辆品牌
+    private String vehicleModel;          // 车辆型号
+    private String vehicleColor;          // 车身颜色
+    private String vehicleVIN;            // 车辆识别代号/车架号
+    private String vehicleEngineNumber;   // 发动机号
+    private String vehicleManufacturer;   // 制造厂家
+    private String vehicleTonnage;        // 吨位
+    private String vehicleMaxPassengers;  // 最大载客人数
+    private String vehicleDisplacement;   // 排量
+    private String vehiclePower;          // 功率
+    private String vehicleCertificateNumber; // 合格证号
+    private String vehicleImportCertificate; // 进口证明书号
+    private String vehicleTaxPaymentCertificate; // 完税证明号码
+    private String vehicleUsage;          // 使用性质
+    private String vehiclePurchaseDate;   // 购车日期
+    private String vehicleInvoiceNumber;  // 机动车统一销售发票号码（二手车情况下）
+    private String vehiclePreviousOwner;  // 前车主（二手车情况下）
+    private String vehicleRegistrationNumber; // 车牌号（二手车情况下）
+    private String vehicleRegistrationDate;   // 注册日期（二手车情况下）
+    private String vehicleUsedYears;          // 已使用年限（二手车情况下）
+    private String vehicleMileage;            // 行驶里程（二手车情况下）
+    private String vehicleInspectionValidity; // 检验有效期（二手车情况下）
+    private String vehicleTransferFee;        // 过户费用（二手车情况下）
+
 }

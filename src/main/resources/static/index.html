@@ -74,7 +74,11 @@
 <div class="container">
     <div class="header">
         <h1 class="text-center">发票解析测试系统</h1>
-        <p class="text-center text-muted">支持多种发票类型的自动解析，包括增值税专用发票、普通发票、电子发票等</p>
+        <p class="text-center text-muted">
+            基于金融税务模型智谱AI-THUDM/GLM-4-9B-0414 与 PDFBox解析整合方案的 PDF发票解读组件<br>
+            支持多种发票类型的自动解析，包括增值税专用发票、普通发票、电子发票等
+
+        </p>
     </div>
 
     <div class="upload-section" id="dropArea">
@@ -276,12 +280,12 @@
                         'NORMAL': '普通发票',
                         'SPECIAL': '增值税专用发票',
                         'ELECTRONIC_FLIGHT': '电子发票（航空运输电子客票行程单）',
-                        'FREIGHT_TRANSPORT': '货物运输',
+                        'AIR_PASSENGER': '货物运输',
                         'CONSTRUCTION': '建筑服务',
                         'PASSENGER_TRANSPORT': '旅客运输服务',
-                        'AGRICULTURAL': '自产农产品销售',
-                        'ELECTRONIC_RAILWAY': '电子发票（铁路电子客票）',
-                        'PROPERTY_LEASING': '不动产经营租赁服务'
+                        'AGRICULTURAL_PRODUCT': '自产农产品销售',
+                        'RAILWAY_TICKET': '电子发票（铁路电子客票）',
+                        'REAL_ESTATE_RENTAL': '不动产经营租赁服务'
                     };
                     invoiceTypeDescription = typeMap[invoice.invoiceType] || invoice.invoiceType;
                 }
