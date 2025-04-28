@@ -120,7 +120,7 @@ public class ElectronicNormalInvoiceParser {
 
 
         // 验证数据完整性
-       // validateData(invoice);
+        validateData(invoice);
 
         log.info("发票解析完成: 发票号码={}, 开票日期={}", invoice.getInvoiceNumber(), invoice.getIssueDate());
         return invoice;

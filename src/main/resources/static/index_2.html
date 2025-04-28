@@ -68,97 +68,6 @@
             font-size: 0.9rem;
             color: #6c757d;
         }
-
-        /* 验证码相关样式 */
-        .captcha-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .captcha-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 350px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .captcha-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .captcha-close {
-            cursor: pointer;
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .slide-container {
-            position: relative;
-            height: 40px;
-            background-color: #f5f5f5;
-            border-radius: 20px;
-            margin-top: 20px;
-        }
-
-        .slide-bg {
-            position: absolute;
-            height: 100%;
-            border-radius: 20px;
-            background-color: #dff0d8;
-            width: 0;
-            transition: width 0.3s;
-        }
-
-        .slide-button {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #5cb85c;
-            color: white;
-            text-align: center;
-            line-height: 40px;
-            cursor: pointer;
-            z-index: 10;
-            transition: left 0.3s;
-            left: 0;
-            user-select: none;
-        }
-
-        .slide-text {
-            position: absolute;
-            width: 100%;
-            height: 40px;
-            text-align: center;
-            line-height: 40px;
-            color: #888;
-            user-select: none;
-        }
-
-        .verification-image {
-            width: 100%;
-            height: 150px;
-            background-color: #eee;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            color: #555;
-            user-select: none;
-        }
     </style>
 </head>
 <body>
@@ -168,6 +77,7 @@
         <p class="text-center text-muted">
             基于金融税务模型智谱AI-THUDM/GLM-4-9B-0414 与 PDFBox解析整合方案的 PDF发票解读组件<br>
             支持多种发票类型的自动解析，包括增值税专用发票、普通发票、电子发票等
+
         </p>
     </div>
 
@@ -216,25 +126,6 @@
     </div>
 </div>
 
-<!-- 滑动验证码模态框 -->
-<div class="captcha-modal" id="captchaModal">
-    <div class="captcha-container">
-        <div class="captcha-header">
-            <h5>安全验证</h5>
-            <span class="captcha-close" id="captchaClose">&times;</span>
-        </div>
-        <p>请完成滑动验证以继续操作</p>
-        <div class="verification-image" id="verificationImage">
-            🔒
-        </div>
-        <div class="slide-container">
-            <div class="slide-bg" id="slideBg"></div>
-            <div class="slide-text">向右滑动验证</div>
-            <div class="slide-button" id="slideButton">→</div>
-        </div>
-    </div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -249,18 +140,6 @@
         const progress = document.querySelector('.progress');
         const loadingSpinner = document.querySelector('.loading-spinner');
         const errorMessage = document.getElementById('errorMessage');
-
-        // 验证码相关元素
-        const captchaModal = document.getElementById('captchaModal');
-        const captchaClose = document.getElementById('captchaClose');
-        const slideButton = document.getElementById('slideButton');
-        const slideBg = document.getElementById('slideBg');
-        const verificationImage = document.getElementById('verificationImage');
-
-        let isVerified = false;
-        let startX = 0;
-        let endX = 0;
-        let moving = false;
 
         // 拖拽文件处理
         dropArea.addEventListener('dragover', (e) => {
@@ -296,12 +175,7 @@
             }
         }
 
-        // 验证码模态框事件
-        captchaClose.addEventListener('click', () => {
-            captchaModal.style.display = 'none';
-        });
-
-        // 点击解析发票按钮时，先显示验证码
+        // 解析发票
         parseBtn.addEventListener('click', () => {
             if (fileInput.files.length === 0) {
                 showError('请选择发票PDF文件');
@@ -314,79 +188,8 @@
                 return;
             }
 
-            // 重置验证状态
-            isVerified = false;
-            slideButton.style.left = '0px';
-            slideBg.style.width = '0px';
-
-            // 生成随机验证图案
-            const emojis = ['🔒', '🔑', '🔐', '📝', '📄', '🧾', '📑', '📋', '📊', '📈'];
-            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-            verificationImage.innerText = randomEmoji;
-
-            // 显示验证码模态框
-            captchaModal.style.display = 'flex';
-        });
-
-        // 滑动验证逻辑
-        slideButton.addEventListener('mousedown', (e) => {
-            startX = e.clientX;
-            moving = true;
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!moving) return;
-
-            const moveX = e.clientX - startX;
-            const slideContainer = document.querySelector('.slide-container');
-            const slideWidth = slideContainer.offsetWidth;
-            const buttonWidth = slideButton.offsetWidth;
-            const maxMoveDistance = slideWidth - buttonWidth;
-
-            if (moveX > 0 && moveX <= maxMoveDistance) {
-                slideButton.style.left = moveX + 'px';
-                slideBg.style.width = (moveX + buttonWidth/2) + 'px';
-            }
-        });
-
-        document.addEventListener('mouseup', (e) => {
-            if (!moving) return;
-
-            moving = false;
-            endX = e.clientX;
-            const moveDistance = endX - startX;
-            const slideContainer = document.querySelector('.slide-container');
-            const slideWidth = slideContainer.offsetWidth;
-            const buttonWidth = slideButton.offsetWidth;
-            const maxMoveDistance = slideWidth - buttonWidth;
-
-            if (moveDistance < maxMoveDistance) {
-                // 未完成验证，复位
-                slideButton.style.left = '0px';
-                slideBg.style.width = '0px';
-            } else {
-                // 完成验证
-                slideButton.style.left = maxMoveDistance + 'px';
-                slideBg.style.width = slideWidth + 'px';
-                isVerified = true;
-
-                // 验证成功后关闭模态框并开始解析
-                setTimeout(() => {
-                    captchaModal.style.display = 'none';
-                    startParsing();
-                }, 500);
-            }
-        });
-
-        // 验证通过后开始解析
-        function startParsing() {
-            if (!isVerified) {
-                showError('请先完成滑动验证');
-                return;
-            }
-
             const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
+            formData.append('file', file);
 
             // 显示进度条和加载动画
             progress.style.display = 'block';
@@ -444,7 +247,7 @@
                         loadingSpinner.style.display = 'none';
                     }, 500);
                 });
-        }
+        });
 
         // 清除按钮
         clearBtn.addEventListener('click', () => {
@@ -739,13 +542,12 @@
                     <table class="table table-striped table-bordered">
                         <thead class="table-light">
                             <tr>
-                                                            <th>项目名称</th>
-                                <th>旅行日期</th>
+                                <th>项目名称</th>
+                                <th>出行日期</th>
+                                <th>座席类别</th>
                                 <th>起点</th>
                                 <th>终点</th>
                                 <th>乘客姓名</th>
-                                <th>座位等级</th>
-                                <th>车次/班次</th>
                                 <th>金额</th>
                                 <th>税率</th>
                                 <th>税额</th>
@@ -755,12 +557,11 @@
                             ${items.map(item => `
                                 <tr>
                                     <td>${item.name || ''}</td>
-                                    <td>${item.travelDate ? new Date(item.travelDate).toLocaleDateString('zh-CN') : ''}</td>
-                                    <td>${item.departureLocation || ''}</td>
-                                    <td>${item.arrivalLocation || ''}</td>
-                                    <td>${item.passengerName || ''}</td>
+                                    <td>${item.travelDate || ''}</td>
                                     <td>${item.seatClass || ''}</td>
-                                    <td>${item.transportNumber || ''}</td>
+                                    <td>${item.origin || ''}</td>
+                                    <td>${item.destination || ''}</td>
+                                    <td>${item.passengerName || ''}</td>
                                     <td>${item.amount || ''}</td>
                                     <td>${item.taxRate || ''}</td>
                                     <td>${item.tax || ''}</td>
@@ -779,16 +580,15 @@
                     <table class="table table-striped table-bordered">
                         <thead class="table-light">
                             <tr>
-                                <th>产品名称</th>
-                                <th>产品类别</th>
-                                <th>产地</th>
-                                <th>农户姓名</th>
-                                <th>单位</th>
+                                <th>农产品名称</th>
+                                <th>农产品类别</th>
+                                <th>收获日期</th>
+                                <th>农户名称</th>
+                                <th>生产方式</th>
                                 <th>数量</th>
+                                <th>单位</th>
                                 <th>单价</th>
                                 <th>金额</th>
-                                <th>税率</th>
-                                <th>税额</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -796,14 +596,13 @@
                                 <tr>
                                     <td>${item.name || ''}</td>
                                     <td>${item.productCategory || ''}</td>
-                                    <td>${item.origin || ''}</td>
+                                    <td>${item.harvestDate ? new Date(item.harvestDate).toLocaleDateString('zh-CN') : ''}</td>
                                     <td>${item.farmerName || ''}</td>
-                                    <td>${item.unit || ''}</td>
+                                    <td>${item.productionMethod || ''}</td>
                                     <td>${item.quantity || ''}</td>
+                                    <td>${item.unit || ''}</td>
                                     <td>${item.unitPrice || ''}</td>
                                     <td>${item.amount || ''}</td>
-                                    <td>${item.taxRate || ''}</td>
-                                    <td>${item.tax || ''}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -820,13 +619,13 @@
                         <thead class="table-light">
                             <tr>
                                 <th>车次</th>
-                                <th>出发日期</th>
-                                <th>出发时间</th>
                                 <th>出发站</th>
                                 <th>到达站</th>
+                                <th>出发日期</th>
                                 <th>乘客姓名</th>
-                                <th>座位号</th>
-                                <th>座位类型</th>
+                                <th>身份证号码</th>
+                                <th>票号</th>
+                                <th>座席类别</th>
                                 <th>金额</th>
                                 <th>税额</th>
                             </tr>
@@ -835,13 +634,13 @@
                             ${items.map(item => `
                                 <tr>
                                     <td>${item.trainNumber || ''}</td>
-                                    <td>${item.departureDate ? new Date(item.departureDate).toLocaleDateString('zh-CN') : ''}</td>
-                                    <td>${item.departureTime || ''}</td>
                                     <td>${item.departureStation || ''}</td>
                                     <td>${item.arrivalStation || ''}</td>
+                                    <td>${item.departureDate ? new Date(item.departureDate).toLocaleDateString('zh-CN') : ''}</td>
                                     <td>${item.passengerName || ''}</td>
-                                    <td>${item.seatNumber || ''}</td>
-                                    <td>${item.seatType || ''}</td>
+                                    <td>${item.idNo || ''}</td>
+                                    <td>${item.ticketNumber || ''}</td>
+                                    <td>${item.seatClass || ''}</td>
                                     <td>${item.amount || ''}</td>
                                     <td>${item.tax || ''}</td>
                                 </tr>
@@ -860,12 +659,10 @@
                         <thead class="table-light">
                             <tr>
                                 <th>项目名称</th>
-                                <th>物业地址</th>
+                                <th>不动产地址</th>
                                 <th>租赁期限</th>
-                                <th>租赁面积(㎡)</th>
-                                <th>单位租金</th>
-                                <th>租赁开始日期</th>
-                                <th>租赁结束日期</th>
+                                <th>承租方</th>
+                                <th>出租方</th>
                                 <th>金额</th>
                                 <th>税率</th>
                                 <th>税额</th>
@@ -877,10 +674,8 @@
                                     <td>${item.name || ''}</td>
                                     <td>${item.propertyAddress || ''}</td>
                                     <td>${item.leasePeriod || ''}</td>
-                                    <td>${item.leaseArea || ''}</td>
-                                    <td>${item.unitRent || ''}</td>
-                                    <td>${item.leaseStartDate ? new Date(item.leaseStartDate).toLocaleDateString('zh-CN') : ''}</td>
-                                    <td>${item.leaseEndDate ? new Date(item.leaseEndDate).toLocaleDateString('zh-CN') : ''}</td>
+                                    <td>${item.tenantName || ''}</td>
+                                    <td>${item.lesseeName || ''}</td>
                                     <td>${item.amount || ''}</td>
                                     <td>${item.taxRate || ''}</td>
                                     <td>${item.tax || ''}</td>
