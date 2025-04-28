@@ -6,6 +6,7 @@
 
 ## 项目介绍
 PDF AInvoice 是一个基于 Spring Boot 框架开发的工具，结合了 Apache PDFBox 和 DeepSeek-VL2 技术，用于对发票数据进行智能解析，并将其转换为 JSON 格式。该工具可广泛应用于发票管理、财务处理和数据存储场景。
+在线演示地址 https://pdfainvoice.wang2sun.com
 
 ## 功能特点
 - **基于 Apache PDFBox 的 PDF 文档解析**：支持对 PDF 文件的高效读取和解析。
@@ -69,6 +70,7 @@ java -jar pdfainvoice-1.0.0.jar --input example.pdf --output result.json
       "amount": 1000
   }
   ```
+
 
 ## 技术栈
 - **后端框架**：Spring Boot
