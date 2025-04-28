@@ -56,21 +56,9 @@ java -jar pdfainvoice-1.0.0.jar --input example.pdf --output result.json
 ## 示例
 以下是一个输入 PDF 和输出 JSON 的示例：
 
-- 输入 PDF 内容：
-  ```
-  发票号: 123456
-  日期: 2025-04-01
-  金额: ¥1000
-  ```
+- 输入内容：
+    由国税局签发的正规电子发票PDF
 - 输出 JSON 内容：
-  ```json
-  {
-      "invoice_number": "123456",
-      "date": "2025-04-01",
-      "amount": 1000
-  }
-  ```
-
 
 ## 技术栈
 - **后端框架**：Spring Boot
